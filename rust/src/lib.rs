@@ -19,6 +19,7 @@ pub mod rest;
 pub mod sdk;
 pub mod service;
 pub mod settings;
+pub mod storage;
 
 use std::collections::HashMap;
 
