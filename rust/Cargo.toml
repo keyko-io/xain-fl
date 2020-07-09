@@ -18,7 +18,7 @@ derive_more = { version = "0.99.3", default-features = false, features = [ "disp
 rand = "0.7.3"
 tarpc = { version = "0.20.0", features = [ "full" ] }
 serde = { version = "1.0.104", features = [ "derive" ] }
-pyo3 = "0.9.0-alpha.1"
+pyo3 = "0.11.1"
 tokio-serde = { version = "0.6.0", features = [ "json" ] }
 stubborn-io = "0.1.8"
 bytes = "0.5.4"

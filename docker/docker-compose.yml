@@ -162,7 +162,7 @@ services:
       # (https://github.com/swagger-api/swagger-ui/blob/master/docker/run.sh)
       # We mount the aggregator.yml directly into this directory so that we can
       # access both yml files in the swagger ui.
-      - ${PWD}/swagger/aggregator.yml:/usr/share/nginx/html/aggregator.yml
+      - ${PWD}/swagger/aggregator.yml:/aggregator.yml
     ports:
       - 80:8080
     networks:
