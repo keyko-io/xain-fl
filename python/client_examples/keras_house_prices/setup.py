@@ -17,7 +17,7 @@ setup(
         "py7zr==0.4.4",
         "scikit-learn==0.22.1",
         "scipy==1.4.1",
-        "tensorflow==1.15.2",
+        "tensorflow==2.2.0",
         "numpy~=1.15",
         "tabulate~=0.8",
     ],
