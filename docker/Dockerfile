@@ -32,5 +32,5 @@ COPY --from=builder /target/debug/aggregator /bin/aggregator
 COPY --from=builder /target/debug/coordinator /bin/coordinator
 COPY python/aggregators aggregators/
 RUN pip install aggregators/
-COPY configs/docker-dev-coordinator.toml /bin/config-coordinator.toml
-COPY configs/docker-dev-aggregator.toml /bin/config-aggregator.toml
+COPY configs/minikube-coordinator.toml /bin/config-coordinator.toml
+COPY configs/minikube-aggregator.toml /bin/config-aggregator.toml
