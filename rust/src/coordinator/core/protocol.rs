@@ -41,7 +41,7 @@ pub struct Protocol {
     counters: Counters,
 
     /// Whether all the round of training are done
-    is_training_complete: bool,
+    pub is_training_complete: bool,
 
     /// Coordinator configuration
     settings: FederatedLearningSettings,

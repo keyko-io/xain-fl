@@ -22,6 +22,11 @@ use tokio::{
     },
 };
 use tracing_futures::Instrument;
+use std::env;
+use std::fs::File;
+use std::io::prelude::*;
+use nix::sys::signal;
+use nix::unistd::Pid;
 
 /// A future that orchestrates the entire aggregator service.
 // TODO: maybe add a HashSet or HashMap of clients who already
@@ -60,6 +65,7 @@ where
     requests: ServiceRequests<A>,
 
     aggregation_future: Option<AggregationFuture<A>>,
+    model_number: usize,
 }
 
 /// This trait defines the methods that an aggregator should
@@ -93,6 +99,7 @@ where
             allowed_ids: HashMap::new(),
             global_weights: Bytes::new(),
             aggregation_future: None,
+            model_number: 0,
         }
     }
 
@@ -217,6 +224,17 @@ where
             Poll::Ready(Ok(weights)) => {
                 info!("aggregation succeeded, settings global weights");
                 self.global_weights = weights;
+                if let Ok(path) = env::var("NEVERMINED_OUTPUTS_PATH") {
+                    let file_name = format!("{}/model_{}.npy", path, self.model_number);
+                    let mut file = File::create(&file_name).unwrap();
+                    info!("Writing model {}", file_name);
+                    file.write_all(&self.global_weights).unwrap();
+                    self.model_number += 1;
+                    if self.model_number == 10 {
+                        signal::kill(Pid::this(), signal::Signal::SIGINT).unwrap();
+                    }
+                }
+
                 Ok(())
             }
             Poll::Ready(Err(e)) => {
