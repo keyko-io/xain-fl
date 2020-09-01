@@ -27,6 +27,8 @@ use std::fs::File;
 use std::io::prelude::*;
 use nix::sys::signal;
 use nix::unistd::Pid;
+use std::thread;
+use std::time::Duration;
 
 /// A future that orchestrates the entire aggregator service.
 // TODO: maybe add a HashSet or HashMap of clients who already
@@ -230,9 +232,6 @@ where
                     info!("Writing model {}", file_name);
                     file.write_all(&self.global_weights).unwrap();
                     self.model_number += 1;
-                    if self.model_number == 10 {
-                        signal::kill(Pid::this(), signal::Signal::SIGINT).unwrap();
-                    }
                 }
 
                 Ok(())
@@ -252,6 +251,10 @@ where
         };
         if response_tx.send(result).is_err() {
             error!("failed to send aggregation response to RPC task: receiver dropped");
+        }
+        if self.model_number == 10 {
+            thread::sleep(Duration::from_millis(10 * 1000));
+            signal::kill(Pid::this(), signal::Signal::SIGINT).unwrap();
         }
     }
 }
