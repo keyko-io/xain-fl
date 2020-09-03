@@ -28,6 +28,8 @@ use tokio::{
         oneshot,
     },
 };
+use nix::sys::signal;
+use nix::unistd::Pid;
 
 struct AggregationFuture(Pin<Box<dyn Future<Output = Result<(), ()>> + Send>>);
 
@@ -266,6 +268,9 @@ where
                     debug!("heartbeat expired: {}", id);
                     let state = self.clients.get_state(&id);
                     self.protocol.heartbeat_timeout(id, state);
+                    if self.protocol.is_training_complete && self.protocol.counters().waiting == 0 {
+                        signal::kill(Pid::this(), signal::Signal::SIGINT).unwrap();
+                    }
                     self.handle_protocol_events();
                 }
                 None => return Poll::Ready(()),
